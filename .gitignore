@@ -1,0 +1,9 @@
+**/db/
+**/board/
+**/incremental_db/
+**/simulation/
+**/output_files/
+**/timing/
+**/*.bak
+**/*.json
+**/*.qdf
