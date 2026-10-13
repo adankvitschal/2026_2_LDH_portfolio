@@ -127,13 +127,51 @@ module DE10_LITE_Golden_Top(
 //  REG/WIRE declarations
 //=======================================================
 
-
-
-
+	wire clk_1s;
+	wire user_button_press;
+	wire user_button_release;
+	wire start_stop;
+	wire end_stop;
+	wire motor_power;
+	wire motor_direction;
+	
 //=======================================================
 //  Structural coding
 //=======================================================
 
+	clk_1s u1 (
+		.rst(~KEY[0]),
+		.clk_50M(MAX10_CLK1_50),
+		.clk_out(clk_1s)
+	);
+	
+	edge_detector(
+		.clk(MAX10_CLK1_50),
+		.rst(~KEY[0]),
+		.button(KEY[1]), //ativo alto
+		.but_press(user_button_press),
+		.but_release(user_button_release)
+	);
 
-
+	//gate simulator
+	gate_counter u2(
+		.rst(~KEY[0]),
+		.clk(MAX10_CLK1_50),
+		.enable(motor_power),
+		.dir(motor_dir),
+		.start_stop(start_stop),
+		.end_stop(end_stop),
+		.led_bar(LEDR[9:0])
+	);
+	
+	fsm_gate_ctrl(
+		.rst(~KEY[0],
+		.clk(MAX10_CLK1_50),
+		.user_button(user_button_press),
+		.start_stop(start_stop),
+		.end_stop(end_stop),
+		.motor_power(motor_power),
+		.motor_direction(motor_direction)
+	);
+	
 endmodule
