@@ -1,7 +1,9 @@
-`define STATE_CLOSED 	2'b00
-`define STATE_CLOSING 	2'b01
-`define STATE_OPEN 		2'b10
-`define STATE_OPENING 	2'b11
+`define STATE_CLOSED 		3'b000
+`define STATE_OPENING 		3'b001
+`define STATE_HALF_OPEN		3'b010
+`define STATE_OPEN 			3'b011
+`define STATE_CLOSING 		3'b100
+`define STATE_HALF_CLOSED	3'b101
 
 module fsm_gate_ctrl(
 	input rst,
@@ -15,8 +17,8 @@ module fsm_gate_ctrl(
 	output reg motor_direction
 );
 
-	reg [1:0] state;
-	reg [1:0] nextState;
+	reg [2:0] state;
+	reg [2:0] nextState;
 
 	//Motor de estados
 	always @(posedge clk) begin
@@ -31,31 +33,49 @@ module fsm_gate_ctrl(
 	always @(*) begin
 		case(state)
 			`STATE_CLOSED: begin
-				if (user_button == 1'b0) begin
-					nextState = `STATE_CLOSED;
-				end else begin
+				if (user_button == 1'b1) begin
 					nextState = `STATE_OPENING;
+				end else begin
+					nextState = `STATE_CLOSED;
 				end
 			end
 			`STATE_OPENING: begin
-				if (end_stop == 1'b0) begin
-					nextState = `STATE_OPENING;
-				end else begin
+				if (end_stop == 1'b1) begin
 					nextState = `STATE_OPEN;
+				else if(user_button==1'b1) begin
+					nextState = `STATE_HALF_OPEN;
+				end else begin
+					nextState = `STATE_OPENING;
+				end
+			end
+			`STATE_HALF_OPEN: begin
+				if (user_button==1b'1) begin
+					nextState = `STATE_CLOSING;
+				end else begin
+					nextState = `STATE_HALF_OPEN;
 				end
 			end
 			`STATE_OPEN: begin
-				if (user_button == 1'b0) begin
+				if (user_button == 1'b1) begin
+					nextState = `STATE_CLOSING;
+				end else begin
 					nextState = `STATE_OPEN;
+				end
+			end
+			`STATE_CLOSING: begin
+				if (start_stop == 1'b1) begin
+					nextState = `STATE_CLOSED;
+				else if(user_button == 1'b1) begin
+					nextState = `STATE_HALF_CLOSED;
 				end else begin
 					nextState = `STATE_CLOSING;
 				end
 			end
-			`STATE_CLOSING: begin
-				if (start_stop == 1'b0) begin
-					nextState = `STATE_CLOSING;
+			`STATE_HALF_CLOSED: begin
+				if (user_button==1b'1) begin
+					nextState = `STATE_OPENING;
 				end else begin
-					nextState = `STATE_CLOSED;
+					nextState = `STATE_HALF_CLOSED;
 				end
 			end
 		endcase
