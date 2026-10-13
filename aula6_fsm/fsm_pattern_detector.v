@@ -32,6 +32,16 @@ module fsm_pattern_detector(
 		endcase
 	end
 	
-	assign match = (state==STATE_S1101);
+	//assign match = (state==`STATE_S1101);
+	always @(*) begin
+		case(state)
+			`STATE_S1101: 	match = 1;
+			`STATE_S110: begin
+				if(data==1) match = 1;
+				else			match = 0;
+			end
+			default:			match = 0;
+		endcase
+	end
 	
 endmodule
