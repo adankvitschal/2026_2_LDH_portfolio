@@ -8,7 +8,7 @@ module fsm_pattern_detector(
 	input		rst,
 	input		clk,
 	input		data,
-	output	match
+	output	reg match
 );
 
 	reg [2:0] state;
@@ -23,11 +23,11 @@ module fsm_pattern_detector(
 
 	always @(*) begin
 		case(state)
-			STATE_S0:		nextState = data ? `STATE_S1  	: `STATE_S0;
-			STATE_S1:		nextState = data ? `STATE_S11 	: `STATE_S0;
-			STATE_S11:		nextState = data ? `STATE_S11 	: `STATE_S110;
-			STATE_S110:		nextState = data ? `STATE_S1101  : `STATE_S0; 
-			STATE_S1101:	nextState = `STATE_S1101;//Trava no estado final, até um rst
+			`STATE_S0:		nextState = data ? `STATE_S1  	: `STATE_S0;
+			`STATE_S1:		nextState = data ? `STATE_S11 	: `STATE_S0;
+			`STATE_S11:		nextState = data ? `STATE_S11 	: `STATE_S110;
+			`STATE_S110:	nextState = data ? `STATE_S1101  : `STATE_S0; 
+			`STATE_S1101:	nextState = `STATE_S1101;//Trava no estado final, até um rst
 			default: 		nextState = `STATE_S0;
 		endcase
 	end
