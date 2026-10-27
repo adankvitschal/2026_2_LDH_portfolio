@@ -8,24 +8,24 @@ module comb_mult(
 	wire [4:0] aw2;
 	wire [5:0] aw3;
 	wire [6:0] aw4;
-	wire [7:0] sw1;
-	wire [7:0] sw2;
+	wire [5:0] sw1;
+	wire [6:0] sw2;
 	wire [7:0] sw3;
 
-	ripple_carry_adder s1 (
-		.a({3'd0, aw1}),
-		.b({2'd0, aw2}),
+	ripple_carry_adder #(.BITS(5)) s1 (
+		.a({1'd0, aw1}),
+		.b(aw2),
 		.s(sw1)
 	);
 	
-	ripple_carry_adder s2 (
-		.a(sw1[6:0]),
-		.b({1'b0, aw3}),
+	ripple_carry_adder #(.BITS(6)) s2 (
+		.a(sw1),
+		.b(aw3),
 		.s(sw2)
 	);
 
-	ripple_carry_adder s3(
-		.a(sw2[6:0]),
+	ripple_carry_adder #(.BITS(7)) s3(
+		.a(sw2),
 		.b(aw4),
 		.s(sw3)
 	);
