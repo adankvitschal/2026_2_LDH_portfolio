@@ -29,8 +29,30 @@ module mult_fsm (
 	
 	//Lógica do próximo estado
 	always @(*) begin
+		case(state)
+			`STATE_IDLE: begin
+				if (start)
+					nextState = `STATE_OP;
+				else
+					nextState = `STATE_IDLE;
+			end
+			`STATE_OP: begin
+				if (zero)
+					nextState = `STATE_DONE;
+				else
+					nextState = `STATE_OP;
+			end
+			`STATE_DONE: begin
+				nextState = `STATE_DONE;
+			end
+			default: begin
+				nextState = `STATE_IDLE;
+			end
+		endcase
 	end
 	
-	//Sinais de saída
+	assign load  = state == `STATE_IDLE;
+	assign clear = load;
+	assign done	 = state == `STATE_DONE;
 	
 endmodule
