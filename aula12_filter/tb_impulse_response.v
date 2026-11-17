@@ -3,13 +3,13 @@
 module tb_impulse_response;
 
 	integer f;
-	reg rst, clk;
-	reg [11:0]	x;
-	wire [11:0] y;
+	reg 						rst, clk;
+	reg 	signed [11:0]	x;
+	wire 	signed [11:0]	y;
 	
 	always #5 clk = ~clk; //Clock 1MHz
 
-	movavg_filter dut (
+	bw2_filter dut (
 		.rst(rst), .clk(clk),
 		.x(x), .y(y)
 	);
@@ -27,10 +27,10 @@ module tb_impulse_response;
 		rst = 1;
 		#10; //1 clock cycle
 		rst = 0;
-		x = 12'b100000000000;
+		x = 12'sb010000000000;
 		#10
-		x = 12'd0;
-		#100
+		x = 12'sd0;
+		#200
 		$fclose(f);
 		$finish;
 	end
